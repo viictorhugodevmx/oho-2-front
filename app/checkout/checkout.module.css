@@ -1,0 +1,441 @@
+.page {
+  min-height: 100vh;
+  padding-block: clamp(2.5rem, 7vw, 6rem);
+  background:
+    radial-gradient(
+      circle at 92% 4%,
+      rgba(217, 41, 28, 0.1),
+      transparent 26rem
+    ),
+    var(--background);
+}
+
+.checkoutLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 25rem);
+  align-items: start;
+  gap: clamp(2rem, 5vw, 4.5rem);
+}
+
+.heading {
+  margin-bottom: 2.5rem;
+}
+
+.heading > span,
+.summaryEyebrow,
+.success > span,
+.emptyState > span {
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.heading h1,
+.success h1,
+.emptyState h1 {
+  margin: 0.65rem 0 0;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.065em;
+}
+
+.heading p,
+.success p,
+.emptyState p {
+  max-width: 40rem;
+  margin: 1.25rem 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.form fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--border);
+  border-radius: 1.2rem;
+  background: var(--surface);
+}
+
+.form legend {
+  padding-inline: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 850;
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.fieldGrid label {
+  display: grid;
+  gap: 0.5rem;
+  color: var(--foreground);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.fieldGrid label:first-child,
+.fullField {
+  grid-column: 1 / -1;
+}
+
+.fieldGrid input,
+.fieldGrid select,
+.fieldGrid textarea {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  outline: none;
+  color: var(--foreground);
+  background: var(--background);
+  font: inherit;
+  font-size: 0.8rem;
+}
+
+.fieldGrid textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.fieldGrid input:focus,
+.fieldGrid select:focus,
+.fieldGrid textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(217, 41, 28, 0.1);
+}
+
+.paymentOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  cursor: pointer;
+}
+
+.paymentOption input {
+  margin-top: 0.25rem;
+  accent-color: var(--accent);
+}
+
+.paymentOption span {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.paymentOption strong {
+  font-size: 0.8rem;
+}
+
+.paymentOption small {
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.summary {
+  position: sticky;
+  top: 6rem;
+  display: grid;
+  gap: 1.2rem;
+  padding: 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: 1.2rem;
+  background: var(--surface);
+}
+
+.itemList {
+  display: grid;
+  gap: 1rem;
+  padding-block: 0.3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.8rem;
+  padding-bottom: 1rem;
+}
+
+.itemPreview {
+  position: relative;
+  overflow: hidden;
+  min-height: 5.5rem;
+  border-radius: 0.7rem;
+  background: #e6e6e1;
+}
+
+.productImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.designImage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  overflow: hidden;
+  width: 32%;
+  aspect-ratio: 4 / 5;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0.35rem 0.7rem rgba(17, 17, 17, 0.2);
+  transform: translate(-50%, -48%);
+}
+
+.designImage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemInformation {
+  display: grid;
+  min-width: 0;
+  gap: 0.25rem;
+}
+
+.itemInformation strong {
+  overflow: hidden;
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemInformation span,
+.itemInformation small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.65rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemPrice {
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.totals {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.totals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.totals span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.totals strong {
+  font-size: 0.78rem;
+}
+
+.totals .total {
+  margin-top: 0.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.totals .total span,
+.totals .total strong {
+  color: var(--foreground);
+  font-size: 1rem;
+}
+
+.shippingMessage {
+  margin: 0;
+  padding: 0.8rem;
+  border-radius: 0.75rem;
+  color: var(--muted);
+  background: var(--background);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.submitButton,
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3rem;
+  padding: 0.8rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.submitButton {
+  width: 100%;
+  border: 0;
+  color: #ffffff;
+  background: var(--foreground);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 850;
+}
+
+.submitButton:hover:not(:disabled),
+.primaryButton:hover {
+  background: var(--accent);
+}
+
+.submitButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.disclaimer {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.65rem;
+  line-height: 1.5;
+}
+
+.backLink {
+  color: var(--foreground);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  color: var(--accent);
+}
+
+.success,
+.emptyState {
+  display: grid;
+  min-height: 65vh;
+  max-width: 50rem;
+  align-content: center;
+}
+
+.success > strong {
+  width: fit-content;
+  margin-top: 1.5rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  color: var(--accent);
+  background: var(--surface);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+}
+
+.success .successNote {
+  font-size: 0.75rem;
+}
+
+.successActions,
+.emptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.primaryButton {
+  color: #ffffff;
+  background: var(--foreground);
+}
+
+.secondaryButton {
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.secondaryButton:hover {
+  border-color: var(--foreground);
+}
+
+@media (max-width: 950px) {
+  .checkoutLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .summary {
+    position: static;
+  }
+}
+
+@media (max-width: 620px) {
+  .fieldGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fieldGrid label,
+  .fieldGrid label:first-child,
+  .fullField {
+    grid-column: auto;
+  }
+
+  .item {
+    grid-template-columns: 4rem minmax(0, 1fr);
+  }
+
+  .itemPrice {
+    grid-column: 2;
+  }
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.clearDraftButton {
+  min-height: 2.75rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--foreground);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 800;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.clearDraftButton:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--surface);
+}
+
+.clearDraftButton:focus-visible {
+  outline: 3px solid rgba(217, 41, 28, 0.2);
+  outline-offset: 3px;
+}
+
+.clearDraftButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

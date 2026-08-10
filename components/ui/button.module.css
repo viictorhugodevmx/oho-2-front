@@ -1,0 +1,102 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.button:focus-visible {
+  outline: 2px solid #d9291c;
+  outline-offset: 3px;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.primary {
+  color: #ffffff;
+  background: #d9291c;
+  border-color: #d9291c;
+}
+
+.primary:hover:not(:disabled) {
+  background: #b91f15;
+  border-color: #b91f15;
+}
+
+.secondary {
+  color: #111111;
+  background: #ffffff;
+  border-color: #cfcfcf;
+}
+
+.secondary:hover:not(:disabled) {
+  border-color: #111111;
+}
+
+.ghost {
+  color: inherit;
+  background: transparent;
+  border-color: transparent;
+}
+
+.ghost:hover:not(:disabled) {
+  background: rgba(127, 127, 127, 0.12);
+}
+
+.danger {
+  color: #ffffff;
+  background: #8f1710;
+  border-color: #8f1710;
+}
+
+.small {
+  min-height: 2.25rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.8rem;
+}
+
+.medium {
+  min-height: 2.75rem;
+  padding: 0.8rem 1.25rem;
+  font-size: 0.9rem;
+}
+
+.large {
+  min-height: 3.25rem;
+  padding: 1rem 1.65rem;
+  font-size: 1rem;
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: rotate 700ms linear infinite;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}

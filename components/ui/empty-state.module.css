@@ -1,0 +1,49 @@
+.container {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 42rem);
+  margin-inline: auto;
+  padding: clamp(3rem, 8vw, 6rem) 1.5rem;
+  border: 1px solid #dededb;
+  border-radius: 1.5rem;
+  text-align: center;
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(217, 41, 28, 0.1),
+      transparent 48%
+    ),
+    #f7f7f4;
+}
+
+.eyebrow {
+  margin-bottom: 1rem;
+  color: #d9291c;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.title {
+  max-width: 22ch;
+  margin: 0;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.description {
+  max-width: 34rem;
+  margin: 1rem 0 0;
+  color: #5c5c5c;
+  line-height: 1.7;
+}
+
+.action {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}

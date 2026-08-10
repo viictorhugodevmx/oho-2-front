@@ -1,0 +1,223 @@
+.page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(24rem, 0.95fr);
+  min-height: calc(100vh - 5rem);
+  background: var(--background);
+}
+
+.introduction,
+.formSection {
+  padding:
+    clamp(3rem, 8vw, 7rem)
+    clamp(1.25rem, 6vw, 6rem);
+}
+
+.introduction {
+  display: grid;
+  align-content: center;
+  color: #ffffff;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(217, 41, 28, 0.8),
+      transparent 25rem
+    ),
+    #111111;
+}
+
+.eyebrow,
+.formHeading > span {
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.introduction h1 {
+  max-width: 42rem;
+  margin: 1rem 0 0;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  line-height: 0.86;
+  letter-spacing: -0.07em;
+}
+
+.introduction > p {
+  max-width: 34rem;
+  margin: 1.5rem 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.7;
+}
+
+.publicAccess {
+  display: grid;
+  max-width: 31rem;
+  gap: 0.35rem;
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.publicAccess strong {
+  font-size: 0.72rem;
+}
+
+.publicAccess span {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.68rem;
+  line-height: 1.6;
+}
+
+.formSection {
+  display: grid;
+  align-content: center;
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+}
+
+.formHeading {
+  margin-bottom: 2rem;
+}
+
+.formHeading h2 {
+  margin: 0.55rem 0 0;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+}
+
+.form {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.field label {
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.field input {
+  width: 100%;
+  min-height: 3.2rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  outline: none;
+  color: var(--foreground);
+  background: var(--surface);
+  font: inherit;
+  font-size: 0.8rem;
+}
+
+.field input::placeholder {
+  color: var(--muted);
+}
+
+.field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(217, 41, 28, 0.1);
+}
+
+.error {
+  margin: 0;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(217, 41, 28, 0.3);
+  border-radius: 0.75rem;
+  color: var(--accent);
+  background: rgba(217, 41, 28, 0.07);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.submitButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3.2rem;
+  margin-top: 0.35rem;
+  padding: 0.85rem 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  color: #ffffff;
+  background: var(--foreground);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 850;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--accent);
+}
+
+.submitButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.registerPrompt {
+  margin: 0.3rem 0 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.registerPrompt a {
+  color: var(--foreground);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.registerPrompt a:hover {
+  color: var(--accent);
+}
+
+.guestLink {
+  width: fit-content;
+  margin-inline: auto;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 750;
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+
+.guestLink:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .introduction {
+    min-height: 30rem;
+  }
+
+  .formSection {
+    min-height: 36rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .introduction,
+  .formSection {
+    padding-inline: 1.25rem;
+  }
+
+  .introduction {
+    min-height: 27rem;
+  }
+
+  .introduction h1 {
+    font-size: clamp(3.3rem, 19vw, 5rem);
+  }
+}
