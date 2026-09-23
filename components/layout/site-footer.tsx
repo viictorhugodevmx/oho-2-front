@@ -20,7 +20,7 @@ export function SiteFooter() {
           <Link href="/products">Productos</Link>
           <Link href="/designs">Diseños</Link>
           <Link href="/favorites">Favoritos</Link>
-          <Link href="/account/orders">Mis pedidos</Link>
+          <Link href="/account">Mis pedidos</Link>
         </nav>
 
         <p className={styles.legal}>

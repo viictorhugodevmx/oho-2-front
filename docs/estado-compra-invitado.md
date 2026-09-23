@@ -5,35 +5,90 @@
 - App OHO 2.0 - paso 25.4.1 listo.
 - App OHO 2.0 - paso 25.4.2 listo.
 - App OHO 2.0 - paso 25.4.3.1 listo.
+- App OHO 2.0 - paso 25.4.3.2 listo.
+- App OHO 2.0 - paso 25.4.3 listo.
+- App OHO 2.0 - paso 25.4.4.1 listo.
 
-## Trabajo actual
+## Resultado implementado
 
-- 25.4.3 permanece abierto.
-- 25.4.3.2: actualización del contrato con compra invitada.
-- Documento: docs/contrato-checkout-v0.1.md.
-- Cierre de 25.4.3.2: pendiente de Víctor.
+La compra como invitado está implementada y aceptada dentro del frontend
+mock.
 
-## Resultado del ajuste frontend
+El flujo permite:
 
-Compra invitada implementada y aceptada por Víctor.
-Confirmación con estilos propios y acciones de login ajustadas.
-El invitado consulta cada confirmación individual; no tiene perfil
-ni historial acumulado.
+- Continuar al checkout sin crear una cuenta.
+- Capturar datos de contacto y entrega.
+- Generar un pedido mock con folio.
+- Mostrar una confirmación con productos, importes y dirección.
+- Consultar esa confirmación individual durante la sesión actual.
 
-El cierre fue comunicado por Víctor; no constituye una ejecución
-de pruebas en su equipo por parte del asistente.
+Los estilos propios de la confirmación y las acciones del login fueron
+revisados y aceptados.
+
+## Diferencia entre cuenta e invitado
+
+### Cliente con cuenta
+
+- Tiene perfil.
+- Conserva historial acumulado.
+- Consulta sus pedidos desde `/account`.
+- Abre el detalle en `/account/orders/[orderNumber]`.
+
+### Invitado
+
+- No tiene perfil.
+- No posee historial acumulado.
+- Consulta únicamente la confirmación individual.
+- El acceso depende de la sesión actual del navegador.
+
+Crear una cuenta posteriormente no asocia automáticamente pedidos
+realizados como invitado.
 
 ## Alcance actual
 
-Frontend mock con persistencia en el navegador.
-Sin pagos, correos o impresión reales.
-Sin asociación automática de pedidos invitados al registrarse.
+La etapa todavía utiliza almacenamiento del navegador.
+
+No existen:
+
+- Backend.
+- Base de datos.
+- Pagos reales.
+- Correos reales.
+- Órdenes reales de impresión.
+- Consulta entre dispositivos.
+
+La pantalla de confirmación indica expresamente que se trata de una compra
+de demostración.
+
+## Contrato preparado
+
+El comportamiento esperado para la futura API está documentado en:
+
+```text
+docs/contrato-checkout-v0.1.md
+```
+
+El contrato contempla:
+
+- Compra con cuenta.
+- Compra como invitado.
+- Precios calculados por el servidor.
+- Cotización previa.
+- Idempotencia.
+- Estados separados de pedido, pago e impresión.
+- Acceso seguro al pedido invitado.
+- Enlace enviado por correo.
+- Pruebas locales de correo mediante Mailpit.
 
 ## Continuación
 
-Revisar y cerrar 25.4.3.2.
-Después confirmar el cierre principal de 25.4.3 y continuar con
-25.4.4: cierre de la etapa frontend mock.
+El paso 25.4.3 está cerrado.
 
-El blueprint del backend local se prepara después de esa etapa.
-Costos y despliegue de producción permanecen pendientes.
+El trabajo actual corresponde al cierre documental y técnico de la etapa
+frontend mock en el paso 25.4.4.
+
+Después se elaborará el blueprint del backend para funcionamiento local con
+Node.js, Express, TypeScript y MongoDB 6.0.20.
+
+Los costos y el despliegue del backend en producción permanecen fuera del
+alcance inmediato.

@@ -2,34 +2,33 @@
 
 Frontend de un ecommerce visual inspirado en la identidad underground de
 **OHO 2.0**, enfocado en productos y diseños relacionados con fotografía,
-video, música y cultura urbana.
+música y cultura urbana.
 
-Esta primera fase funciona completamente con datos mock y almacenamiento
-local. No necesita un backend ni variables de entorno.
+Esta etapa funciona con datos mock y almacenamiento del navegador. Permite
+probar el flujo completo de compra tanto con una cuenta como en modalidad
+de invitado, pero todavía no procesa pagos, correos ni productos reales.
 
 ## Estado del proyecto
 
-Frontend MVP terminado y preparado para validación de producción y
-despliegue en Netlify.
+La etapa frontend mock está terminada y desplegada en Netlify:
+
+https://oho-2.netlify.app/
 
 Incluye:
 
 - Catálogo de productos.
-- Galería de diseños.
-- Filtros por categoría.
-- Detalle individual de productos y diseños.
-- Personalización de productos.
-- Favoritos.
-- Carrito de compra.
+- Galería y filtros de diseños.
+- Detalle y personalización de productos.
+- Favoritos persistentes.
+- Carrito persistente.
 - Registro e inicio de sesión mock.
-- Rutas protegidas.
+- Compra con una cuenta.
+- Compra como invitado.
 - Checkout con borrador persistente.
-- Creación e historial de pedidos.
-- Detalle individual de pedidos.
-- Estados de carga y error.
-- Página 404 personalizada.
-- Diseño responsive.
-- Mejoras de accesibilidad.
+- Confirmación individual del pedido invitado.
+- Historial y detalle de pedidos para usuarios registrados.
+- Estados globales de carga, error y página 404.
+- Diseño responsive y navegación accesible.
 
 ## Stack
 
@@ -39,7 +38,7 @@ Incluye:
 - React 19.2.8
 - React DOM 19.2.8
 - TypeScript 5
-- App Router
+- Next.js App Router
 - CSS Modules
 - ESLint 9
 - Tailwind CSS 4 instalado como dependencia
@@ -48,13 +47,6 @@ Incluye:
 
 ## Requisitos
 
-Antes de iniciar, verifica que tengas instalados:
-
-```bash
-node --version
-npm --version
-```
-
 Versiones utilizadas durante el desarrollo:
 
 ```text
@@ -62,13 +54,20 @@ Node.js: 22.19.0
 npm: 10.9.3
 ```
 
-## Instalación
-
-Clona el repositorio y entra al frontend:
+Puedes comprobar tus versiones con:
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
-cd oho-2.0/front
+node --version
+npm --version
+```
+
+## Instalación
+
+Clona el repositorio:
+
+```bash
+git clone git@github.com:viictorhugodevmx/oho-2-front.git
+cd oho-2-front
 ```
 
 Instala las dependencias:
@@ -93,7 +92,7 @@ http://localhost:3000
 
 | Comando | Descripción |
 | --- | --- |
-| `npm run dev` | Inicia Next.js en modo desarrollo |
+| `npm run dev` | Inicia Next.js en desarrollo |
 | `npm run build` | Genera el build de producción |
 | `npm run start` | Ejecuta el build de producción |
 | `npm run lint` | Ejecuta ESLint |
@@ -104,7 +103,7 @@ Validación recomendada:
 npm run lint && npm run build
 ```
 
-Para probar localmente el build de producción:
+Para ejecutar localmente el build de producción:
 
 ```bash
 npm run build
@@ -113,103 +112,91 @@ npm run start
 
 ## Variables de entorno
 
-Esta fase no utiliza variables de entorno.
+La etapa frontend mock no utiliza variables de entorno.
 
-No es necesario crear archivos `.env` o `.env.local` para ejecutar el
-proyecto.
+No es necesario crear `.env` o `.env.local`. La futura conexión con el
+backend incorporará su propia configuración de entorno.
 
 ## Credenciales demo
-
-Puedes iniciar sesión con:
 
 ```text
 Correo: demo@oho20.mx
 Contraseña: OhoDemo20
 ```
 
-También puedes registrar un usuario nuevo desde `/register`.
+También se puede registrar un usuario desde `/register`.
 
-Las cuentas creadas en esta fase se almacenan localmente en el navegador y
-no se envían a ningún servidor.
+Las cuentas y contraseñas de esta etapa se almacenan únicamente en el
+navegador. No deben utilizarse datos personales reales.
 
 ## Rutas
 
 | Ruta | Descripción | Acceso |
 | --- | --- | --- |
-| `/` | Landing y presentación de OHO 2.0 | Público |
+| `/` | Landing de OHO 2.0 | Público |
 | `/products` | Catálogo de productos | Público |
-| `/products/[slug]` | Detalle y personalización de producto | Público |
+| `/products/[slug]` | Detalle y personalización | Público |
 | `/designs` | Galería y filtros de diseños | Público |
-| `/designs/[slug]` | Detalle individual de diseño | Público |
-| `/favorites` | Diseños marcados como favoritos | Público |
+| `/designs/[slug]` | Detalle de un diseño | Público |
+| `/favorites` | Diseños favoritos | Público |
 | `/cart` | Carrito de compra | Público |
-| `/login` | Inicio de sesión | Público |
+| `/login` | Inicio de sesión y acceso como invitado | Público |
 | `/register` | Registro mock | Público |
-| `/checkout` | Datos de compra y confirmación | Protegido |
-| `/account` | Perfil e historial de pedidos | Protegido |
-| `/account/orders/[orderNumber]` | Detalle de un pedido | Protegido |
+| `/checkout` | Datos y confirmación de compra | Cuenta o invitado |
+| `/order-confirmation/[orderNumber]` | Confirmación de compra invitada | Invitado de la sesión |
+| `/account` | Perfil e historial de pedidos | Cuenta autenticada |
+| `/account/orders/[orderNumber]` | Detalle de un pedido | Cuenta autenticada |
 
 Una ruta inexistente muestra la página 404 personalizada.
 
 ## Funcionalidades
 
-### Catálogo de productos
+### Productos y diseños
 
-- Consulta de productos mock.
+- Consulta de productos y diseños mock.
 - Filtros por categoría.
-- Tarjetas con imagen, nombre, categoría y precio.
-- Navegación al detalle mediante `slug`.
-- Estados vacíos cuando no existen coincidencias.
-
-### Galería de diseños
-
-- Consulta de diseños mock.
-- Filtros por categorías:
-  - Concert
-  - Street
-  - Studio
-  - Backstage
-  - Portrait
-- Diseños destacados.
-- Selección mediante parámetros de URL.
-- Navegación al detalle de cada diseño.
-
-### Personalización
-
-En el detalle de producto se puede seleccionar:
-
-- Diseño.
-- Formato:
-  - Standard
-  - Large
-  - Premium
+- Navegación mediante `slug`.
+- Detalle individual.
+- Selección de diseño.
+- Selección de formato `Standard`, `Large` o `Premium`.
 - Cantidad de 1 a 10.
+- Cálculo del precio según la configuración.
 
-El precio final se calcula de acuerdo con la configuración seleccionada.
-
-Para agregar un artículo al carrito es obligatorio seleccionar un diseño
-válido.
+Para agregar un producto al carrito se debe seleccionar un diseño válido.
 
 ### Favoritos
 
-- Agregar diseños a favoritos.
-- Eliminar diseños de favoritos.
-- Persistencia después de recargar la página.
+- Agregar y eliminar diseños.
+- Persistencia después de recargar.
 - Estado vacío cuando no existen favoritos.
 
 ### Carrito
+
+El proyecto utiliza un único carrito activo ubicado en:
+
+```text
+lib/cart/cart-store.ts
+```
+
+Su clave de almacenamiento es:
+
+```text
+oho-cart
+```
+
+Permite:
 
 - Agregar productos personalizados.
 - Incrementar o disminuir cantidades.
 - Eliminar artículos.
 - Vaciar el carrito.
-- Cálculo de subtotal y total.
-- Persistencia en `localStorage`.
-- Sincronización mediante eventos de almacenamiento.
+- Calcular subtotal y total.
+- Conservar el contenido al recargar.
+- Sincronizar cambios mediante eventos del navegador.
 
 ### Autenticación mock
 
-- Inicio de sesión con usuario demo.
+- Inicio de sesión con el usuario demo.
 - Registro de usuarios locales.
 - Validación de correo.
 - Contraseña mínima de ocho caracteres.
@@ -217,34 +204,52 @@ válido.
 - Prevención de correos duplicados.
 - Sesión persistente.
 - Cierre de sesión.
-- Redirección a la ruta solicitada originalmente.
-- Protección de `/checkout` y `/account`.
+- Protección de cuenta e historial.
+- Regreso a la ruta solicitada después de iniciar sesión.
 
-### Checkout
+### Checkout con cuenta
 
-- Formulario de información del comprador.
-- Datos de envío.
-- Validaciones antes de confirmar.
-- Resumen del pedido.
-- Borrador persistente por usuario.
-- Limpieza manual del borrador.
-- Creación de un pedido mock.
-- Limpieza del carrito después de confirmar.
-- Redirección al detalle del pedido creado.
+Un usuario autenticado puede:
+
+- Completar los datos de entrega.
+- Revisar el resumen de compra.
+- Guardar temporalmente el borrador.
+- Confirmar un pedido mock.
+- Consultar el pedido desde su cuenta.
+- Ver su historial acumulado.
+
+### Checkout como invitado
+
+Desde el acceso al checkout, una persona puede elegir **Continuar como
+invitado** sin crear una cuenta.
+
+El flujo invitado permite:
+
+- Completar datos de contacto y entrega.
+- Confirmar un pedido mock.
+- Recibir un folio.
+- Consultar la confirmación individual durante la sesión actual.
+- Revisar productos, importes y datos de entrega.
+
+El invitado no tiene perfil ni historial acumulado. En la futura etapa con
+backend, la consulta posterior se realizará mediante un enlace seguro
+enviado al correo indicado durante la compra.
+
+Crear una cuenta después de comprar no asociará automáticamente los
+pedidos invitados.
 
 ### Cuenta y pedidos
 
-- Información del usuario autenticado.
-- Historial de pedidos.
+Los usuarios registrados disponen de:
+
+- Información de cuenta.
+- Historial acumulado.
 - Estado, fecha, productos y total.
-- Detalle individual mediante número de pedido.
-- Persistencia de pedidos creados.
-- Datos semilla para la cuenta demo.
+- Detalle mediante número de pedido.
+- Persistencia local de pedidos.
+- Datos semilla para el usuario demo.
 
 ## Persistencia local
-
-La aplicación utiliza almacenamiento del navegador para simular la
-persistencia de un backend.
 
 ### `localStorage`
 
@@ -255,21 +260,14 @@ Se utiliza para conservar:
 - Favoritos.
 - Carrito.
 - Pedidos.
-- Borrador del checkout.
-
-El carrito también utiliza la clave:
-
-```text
-oho-cart
-```
+- Borradores del checkout.
 
 ### `sessionStorage`
 
-Se utiliza durante el flujo de checkout para información temporal asociada
-a la navegación y confirmación del pedido.
+Se utiliza para mantener temporalmente el acceso a la confirmación de una
+compra invitada dentro del navegador actual.
 
-Para reiniciar completamente la demo puedes borrar los datos del sitio
-desde las herramientas del navegador:
+Para reiniciar la demostración:
 
 ```text
 DevTools → Application → Storage → Clear site data
@@ -279,19 +277,16 @@ La información es local a cada navegador y dispositivo.
 
 ## Arquitectura
 
-El proyecto separa presentación, estado, reglas de aplicación y acceso a
-datos.
-
 ```text
-app/components
-      ↓
+app / components
+       ↓
 features
-      ↓
+       ↓
 services
-      ↓
+       ↓
 repositories
-      ↓
-mocks / localStorage
+       ↓
+mocks / almacenamiento del navegador
 ```
 
 ### Directorios principales
@@ -304,6 +299,7 @@ app/
 ├── designs/
 ├── favorites/
 ├── login/
+├── order-confirmation/
 ├── products/
 ├── register/
 ├── error.tsx
@@ -320,14 +316,15 @@ components/
 
 features/
 ├── auth/
-├── cart/
 └── favorites/
 
 lib/
 ├── cart/
+├── checkout/
 ├── storage/
 └── utils/
 
+docs/
 mocks/
 repositories/
 services/
@@ -339,53 +336,52 @@ types/
 | Directorio | Responsabilidad |
 | --- | --- |
 | `app` | Rutas, layouts, páginas y composición |
-| `components` | Componentes reutilizables de UI y layout |
+| `components` | Interfaz y componentes reutilizables |
 | `features` | Estado y comportamiento por funcionalidad |
 | `services` | Casos de uso, validaciones y reglas |
-| `repositories` | Acceso abstracto a mocks y almacenamiento |
-| `mocks` | Datos iniciales de productos, diseños, usuarios y pedidos |
-| `types` | Contratos TypeScript del dominio |
-| `lib` | Utilidades e infraestructura compartida |
+| `repositories` | Acceso a mocks y almacenamiento |
+| `mocks` | Datos iniciales |
+| `types` | Contratos TypeScript |
+| `lib` | Infraestructura y utilidades compartidas |
+| `docs` | Estado y contratos para la transición al backend |
 
 Los módulos usan `"use client"` únicamente cuando necesitan eventos,
-hooks, contextos, estado del navegador o almacenamiento web.
+hooks, contextos o almacenamiento del navegador.
 
 ## Dominio
 
-Los contratos principales se encuentran en `types/`:
+Contratos principales:
 
-- `auth.ts`
-- `cart.ts`
-- `common.ts`
-- `design.ts`
-- `order.ts`
-- `product.ts`
+- `types/auth.ts`
+- `types/cart.ts`
+- `types/common.ts`
+- `types/design.ts`
+- `types/order.ts`
+- `types/product.ts`
 
-Los repositorios disponibles son:
+Repositorios activos:
 
-- `auth.repository.ts`
-- `cart.repository.ts`
-- `catalog.repository.ts`
-- `favorites.repository.ts`
-- `order.repository.ts`
+- `repositories/auth.repository.ts`
+- `repositories/catalog.repository.ts`
+- `repositories/favorites.repository.ts`
+- `repositories/order.repository.ts`
 
-Los servicios disponibles son:
+Servicios activos:
 
-- `auth.service.ts`
-- `cart.service.ts`
-- `catalog.service.ts`
-- `favorites.service.ts`
-- `order.service.ts`
-- `pricing.service.ts`
+- `services/auth.service.ts`
+- `services/catalog.service.ts`
+- `services/favorites.service.ts`
+- `services/order.service.ts`
+
+El carrito utiliza su almacén activo en `lib/cart/cart-store.ts`; no existe
+un segundo repositorio o contexto de carrito.
 
 ## Estados especiales
-
-Next.js utiliza los siguientes archivos globales:
 
 | Archivo | Función |
 | --- | --- |
 | `app/loading.tsx` | Estado global de carga |
-| `app/error.tsx` | Captura de errores y opción de reintento |
+| `app/error.tsx` | Captura de errores y reintento |
 | `app/not-found.tsx` | Página personalizada para rutas inexistentes |
 
 ## Accesibilidad
@@ -393,130 +389,139 @@ Next.js utiliza los siguientes archivos globales:
 La interfaz incluye:
 
 - HTML semántico.
-- Etiquetas asociadas a campos.
+- Etiquetas asociadas con sus campos.
 - Nombres accesibles en controles con símbolos.
-- Estados mediante `aria-pressed`.
+- Estados mediante atributos ARIA.
 - Mensajes mediante `aria-live`.
-- Indicadores mediante `aria-busy`.
 - Navegación con teclado.
-- Activación mediante `Enter`.
 - Foco visible.
 - Compatibilidad con `prefers-reduced-motion`.
 - Adaptación al zoom del navegador.
 
 ## Diseño responsive
 
-Las rutas principales fueron revisadas en:
-
-```text
-Móvil: 390 × 844
-Escritorio: 1440 × 900
-```
-
-También se validaron:
+Las rutas principales fueron revisadas en móvil y escritorio, incluyendo:
 
 - Ausencia de scroll horizontal.
 - Tarjetas e imágenes sin desbordamiento.
-- Navegación utilizable en móvil.
+- Navegación utilizable.
 - Formularios y botones visibles.
 - Página 404 responsive.
 - Contenido funcional con zoom al 200 %.
 
 ## Pruebas manuales sugeridas
 
-### Compra como usuario demo
+### Compra con una cuenta
 
 1. Abre `/login`.
 2. Inicia sesión con las credenciales demo.
-3. Entra a `/products`.
-4. Selecciona un producto.
-5. Elige un diseño, formato y cantidad.
-6. Agrega el producto al carrito.
-7. Entra a `/cart`.
-8. Continúa al checkout.
-9. Completa los datos solicitados.
-10. Confirma el pedido.
-11. Verifica la redirección al detalle.
-12. Abre `/account` y comprueba el historial.
-13. Recarga la página y confirma la persistencia.
+3. Selecciona un producto y un diseño.
+4. Agrega el producto al carrito.
+5. Continúa al checkout.
+6. Completa los datos de entrega.
+7. Confirma el pedido.
+8. Comprueba el detalle y el historial en `/account`.
+9. Recarga y confirma la persistencia.
 
-### Protección de rutas
+### Compra como invitado
+
+1. Cierra cualquier sesión existente.
+2. Agrega uno o más productos al carrito.
+3. Continúa al checkout.
+4. En el login selecciona **Continuar como invitado**.
+5. Completa los datos de contacto y entrega.
+6. Confirma el pedido.
+7. Comprueba el folio, importes y dirección.
+8. Verifica que el invitado no tenga perfil ni historial acumulado.
+
+### Protección de cuenta
 
 1. Cierra sesión.
-2. Abre directamente `/checkout` o `/account`.
+2. Abre `/account`.
 3. Comprueba la redirección al login.
 4. Inicia sesión.
 5. Verifica el regreso a la ruta solicitada.
 
-### Favoritos
-
-1. Abre `/designs`.
-2. Marca uno o más diseños.
-3. Entra a `/favorites`.
-4. Recarga la página.
-5. Comprueba que los favoritos permanezcan.
-
 ### Estados globales
 
-1. Abre una ruta inexistente y valida la página 404.
-2. Comprueba que sus enlaces funcionen.
-3. Navega con `Tab` y verifica el foco visible.
-4. Ejecuta el proyecto con el build de producción.
+1. Abre una ruta inexistente.
+2. Valida la página 404.
+3. Navega con `Tab`.
+4. Comprueba el foco visible.
+5. Ejecuta el build de producción.
 
 ## Despliegue en Netlify
 
-El despliegue está previsto para Netlify.
+El frontend mock está desplegado en:
 
-Configuración esperada:
+https://oho-2.netlify.app/
 
-```text
-Base directory: front
-Build command: npm run build
-Publish directory: .next
+El repositorio incluye `netlify.toml`:
+
+```toml
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22.19.0"
+  NPM_VERSION = "10.9.3"
 ```
 
-Si el repositorio conectado contiene directamente este frontend, la
-carpeta base puede dejarse vacía.
+Netlify detecta Next.js y aplica su integración para App Router, páginas
+estáticas, rutas dinámicas y renderizado bajo demanda.
 
-La configuración definitiva se agregará al proyecto antes del despliegue.
+El repositorio conectado contiene directamente el frontend, por lo que no
+requiere una carpeta base adicional.
 
-## Limitaciones de esta fase
+No se deben agregar:
 
-Esta versión es una demostración frontend:
+- Una redirección SPA hacia `index.html`.
+- Un export estático que elimine las rutas dinámicas.
+- El plugin antiguo `@netlify/plugin-nextjs`.
+
+## Limitaciones de esta etapa
+
+Esta versión sigue siendo una demostración frontend:
 
 - No existe una API real.
-- No existe base de datos.
+- No existe una base de datos.
 - La autenticación no es segura para producción.
 - Las contraseñas se guardan localmente sin cifrado.
 - Los pagos son simulados.
-- Los pedidos solo existen en el navegador actual.
-- No existe sincronización entre dispositivos.
-- Las imágenes y datos proceden de recursos mock.
-- Limpiar el almacenamiento elimina la información creada localmente.
+- No se envían correos.
+- No se generan órdenes reales de impresión.
+- Los pedidos existen únicamente en el navegador actual.
+- No hay sincronización entre dispositivos.
+- El acceso invitado depende de la sesión del navegador.
+- Limpiar el almacenamiento elimina la información local.
 
-No deben utilizarse credenciales personales reales en esta versión.
+## Próxima etapa
 
-## Próxima fase
+La siguiente etapa será el blueprint y desarrollo local del backend con:
 
-La siguiente fase incorporará un backend con:
-
+- Node.js.
+- Express.
+- TypeScript.
+- MongoDB 6.0.20.
 - API REST.
-- Node.js y Express.
-- MongoDB.
 - Autenticación segura.
 - Hash de contraseñas.
 - Persistencia real.
-- Administración de productos y diseños.
-- Pedidos asociados a usuarios.
-- Integración de pagos en una fase posterior.
+- Compra con cuenta e invitado.
+- Cotización calculada por el servidor.
+- Gestión de pedidos.
+- Mailpit para probar correos localmente.
+- Preparación para pagos e impresión posteriores.
+
+Los costos y el despliegue del backend en producción se analizarán después
+de validar su funcionamiento local.
 
 ## Documentación adicional
 
-La separación de capas también está resumida en:
-
-```text
-ARCHITECTURE.md
-```
+- `ARCHITECTURE.md`
+- `docs/estado-compra-invitado.md`
+- `docs/contrato-checkout-v0.1.md`
 
 ## Autor
 
