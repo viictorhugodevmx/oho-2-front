@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import { ProtectedRoute } from "@/features/auth/protected-route";
+import { Suspense, type ReactNode } from "react";
+import { CheckoutAccess } from "./checkout-access";
 
 interface CheckoutLayoutProps {
   children: ReactNode;
@@ -8,5 +8,9 @@ interface CheckoutLayoutProps {
 export default function CheckoutLayout({
   children,
 }: CheckoutLayoutProps) {
-  return <ProtectedRoute>{children}</ProtectedRoute>;
+  return (
+    <Suspense fallback={<p role="status">Preparando checkout...</p>}>
+      <CheckoutAccess>{children}</CheckoutAccess>
+    </Suspense>
+  );
 }

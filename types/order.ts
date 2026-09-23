@@ -22,12 +22,15 @@ export interface CheckoutData {
   shippingAddress: ShippingAddress;
   paymentMethod: PaymentMethod;
   checkoutId?: string;
+  contactEmail: string;
+  deliveryNotes?: string;
+  guestSessionId?: string;
 }
 
 export interface Order {
   id: EntityId;
   orderNumber: string;
-  userId: EntityId;
+  userId: EntityId | null;
   items: CartItem[];
   subtotal: number;
   shipping: number;
@@ -36,5 +39,8 @@ export interface Order {
   shippingAddress: ShippingAddress;
   paymentMethod: PaymentMethod;
   checkoutId?: string;
+  contactEmail?: string;
+  deliveryNotes?: string;
+  guestSessionId?: string;
   createdAt: string;
 }

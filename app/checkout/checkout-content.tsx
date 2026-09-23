@@ -10,12 +10,9 @@ import {
   useSyncExternalStore,
 } from "react";
 import { useAuth } from "@/features/auth/auth-context";
-import {
-  clearCart,
-  getCart,
-  subscribeToCart,
-} from "@/lib/cart";
-import { orderService } from "@/services";
+import { clearCart, getCart, subscribeToCart } from "@/lib/cart";
+import { getGuestSessionId } from "@/lib/checkout/guest-session";
+import { catalogService, orderService } from "@/services";
 import type { Cart, CheckoutData } from "@/types";
 import styles from "./checkout.module.css";
 
@@ -55,66 +52,45 @@ function getServerCart() {
   return EMPTY_CART;
 }
 
-function createCheckoutId(): string {
-  if (
-    typeof crypto !== "undefined" &&
-    typeof crypto.randomUUID === "function"
-  ) {
-    return `checkout-${crypto.randomUUID()}`;
-  }
-
-  return `checkout-${Date.now()}-${Math.random()
-    .toString(36)
-    .slice(2, 10)}`;
+function getCheckoutStorageKey(buyerKey: string): string {
+  return `oho:checkout:${buyerKey}`;
 }
 
-function getCheckoutStorageKey(userId: string): string {
-  return `oho:checkout:${userId}`;
+function getCheckoutDraftStorageKey(buyerKey: string): string {
+  return `oho:checkout-draft:${buyerKey}`;
 }
 
-function getCheckoutDraftStorageKey(userId: string): string {
-  return `oho:checkout-draft:${userId}`;
-}
-
-function getStoredCheckoutId(
-  userId: string,
-): string | null {
+function getStoredCheckoutId(buyerKey: string): string | null {
   return window.sessionStorage.getItem(
-    getCheckoutStorageKey(userId),
+    getCheckoutStorageKey(buyerKey),
   );
 }
 
-function getOrCreateCheckoutId(userId: string): string {
-  const storageKey = getCheckoutStorageKey(userId);
-  const storedCheckoutId = getStoredCheckoutId(userId);
+function getOrCreateCheckoutId(buyerKey: string): string {
+  const existingId = getStoredCheckoutId(buyerKey);
 
-  if (storedCheckoutId) {
-    return storedCheckoutId;
+  if (existingId) {
+    return existingId;
   }
 
-  const checkoutId = createCheckoutId();
+  const checkoutId = `checkout-${crypto.randomUUID()}`;
 
   window.sessionStorage.setItem(
-    storageKey,
+    getCheckoutStorageKey(buyerKey),
     checkoutId,
   );
 
   return checkoutId;
 }
 
-function clearCheckoutId(userId: string): void {
+function clearCheckoutId(buyerKey: string): void {
   window.sessionStorage.removeItem(
-    getCheckoutStorageKey(userId),
+    getCheckoutStorageKey(buyerKey),
   );
 }
 
-function isCheckoutDraft(
-  value: unknown,
-): value is CheckoutDraft {
-  if (
-    typeof value !== "object" ||
-    value === null
-  ) {
+function isCheckoutDraft(value: unknown): value is CheckoutDraft {
+  if (typeof value !== "object" || value === null) {
     return false;
   }
 
@@ -126,10 +102,10 @@ function isCheckoutDraft(
 }
 
 function getStoredCheckoutDraft(
-  userId: string,
+  buyerKey: string,
 ): CheckoutDraft | null {
   const storedDraft = window.localStorage.getItem(
-    getCheckoutDraftStorageKey(userId),
+    getCheckoutDraftStorageKey(buyerKey),
   );
 
   if (!storedDraft) {
@@ -139,12 +115,10 @@ function getStoredCheckoutDraft(
   try {
     const parsedDraft: unknown = JSON.parse(storedDraft);
 
-    return isCheckoutDraft(parsedDraft)
-      ? parsedDraft
-      : null;
+    return isCheckoutDraft(parsedDraft) ? parsedDraft : null;
   } catch {
     window.localStorage.removeItem(
-      getCheckoutDraftStorageKey(userId),
+      getCheckoutDraftStorageKey(buyerKey),
     );
 
     return null;
@@ -152,24 +126,22 @@ function getStoredCheckoutDraft(
 }
 
 function saveCheckoutDraft(
-  userId: string,
+  buyerKey: string,
   draft: CheckoutDraft,
 ): void {
   window.localStorage.setItem(
-    getCheckoutDraftStorageKey(userId),
+    getCheckoutDraftStorageKey(buyerKey),
     JSON.stringify(draft),
   );
 }
 
-function clearCheckoutDraft(userId: string): void {
+function clearCheckoutDraft(buyerKey: string): void {
   window.localStorage.removeItem(
-    getCheckoutDraftStorageKey(userId),
+    getCheckoutDraftStorageKey(buyerKey),
   );
 }
 
-function createDraftFromForm(
-  form: HTMLFormElement,
-): CheckoutDraft {
+function createDraftFromForm(form: HTMLFormElement): CheckoutDraft {
   const formData = new FormData(form);
 
   return {
@@ -177,17 +149,11 @@ function createDraftFromForm(
     email: String(formData.get("email") ?? ""),
     phone: String(formData.get("phone") ?? ""),
     address: String(formData.get("address") ?? ""),
-    neighborhood: String(
-      formData.get("neighborhood") ?? "",
-    ),
+    neighborhood: String(formData.get("neighborhood") ?? ""),
     city: String(formData.get("city") ?? ""),
     state: String(formData.get("state") ?? ""),
-    postalCode: String(
-      formData.get("postalCode") ?? "",
-    ),
-    deliveryNotes: String(
-      formData.get("deliveryNotes") ?? "",
-    ),
+    postalCode: String(formData.get("postalCode") ?? ""),
+    deliveryNotes: String(formData.get("deliveryNotes") ?? ""),
   };
 }
 
@@ -212,6 +178,10 @@ export function CheckoutContent() {
   const router = useRouter();
   const { user } = useAuth();
 
+  const guestSessionId = user ? null : getGuestSessionId();
+  const buyerKey =
+    user?.id ?? (guestSessionId ? `guest:${guestSessionId}` : null);
+
   const cart = useSyncExternalStore(
     subscribeToCart,
     getCart,
@@ -220,16 +190,13 @@ export function CheckoutContent() {
 
   const formRef = useRef<HTMLFormElement | null>(null);
   const submissionLockRef = useRef(false);
-  const initializedForUserRef = useRef<string | null>(
-    null,
-  );
+  const initializedForBuyerRef = useRef<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
   const subtotal = cart.reduce(
-    (total, item) =>
-      total + item.unitPrice * item.quantity,
+    (total, item) => total + item.unitPrice * item.quantity,
     0,
   );
 
@@ -238,32 +205,30 @@ export function CheckoutContent() {
 
   useEffect(() => {
     if (
-      !user ||
-      initializedForUserRef.current === user.id
+      !buyerKey ||
+      initializedForBuyerRef.current === buyerKey
     ) {
       return;
     }
 
-    initializedForUserRef.current = user.id;
-
-    const checkoutId = getStoredCheckoutId(user.id);
+    const checkoutId = getStoredCheckoutId(buyerKey);
 
     if (checkoutId) {
-      const recoveredOrder =
-        orderService.getByCheckoutIdForUser(
-          checkoutId,
-          user.id,
-        );
+      const recoveredOrder = user
+        ? orderService.getByCheckoutIdForUser(checkoutId, user.id)
+        : orderService.getByCheckoutIdForGuest(checkoutId);
 
       if (recoveredOrder) {
         clearCart();
-        clearCheckoutId(user.id);
-        clearCheckoutDraft(user.id);
+        clearCheckoutId(buyerKey);
+        clearCheckoutDraft(buyerKey);
+
+        const basePath = user
+          ? "/account/orders"
+          : "/order-confirmation";
 
         router.replace(
-          `/account/orders/${encodeURIComponent(
-            recoveredOrder.orderNumber,
-          )}`,
+          `${basePath}/${encodeURIComponent(recoveredOrder.orderNumber)}`,
         );
 
         return;
@@ -276,7 +241,9 @@ export function CheckoutContent() {
       return;
     }
 
-    const storedDraft = getStoredCheckoutDraft(user.id);
+    initializedForBuyerRef.current = buyerKey;
+
+    const storedDraft = getStoredCheckoutDraft(buyerKey);
 
     if (storedDraft) {
       restoreCheckoutDraft(form, storedDraft);
@@ -286,26 +253,32 @@ export function CheckoutContent() {
     const emailControl = form.elements.namedItem("email");
 
     if (emailControl instanceof HTMLInputElement) {
-      emailControl.value = user.email;
+      emailControl.value = user?.email ?? "";
     }
-  }, [router, user]);
+  }, [buyerKey, cart.length, router, user]);
 
   function handleDraftChange(
     event: FormEvent<HTMLFormElement>,
   ): void {
-    if (!user || isSubmitting) {
+    if (!buyerKey || isSubmitting) {
       return;
     }
 
-    saveCheckoutDraft(
-      user.id,
-      createDraftFromForm(event.currentTarget),
-    );
+    try {
+      saveCheckoutDraft(
+        buyerKey,
+        createDraftFromForm(event.currentTarget),
+      );
+    } catch {
+      setSubmitError(
+        "No fue posible guardar el borrador en este navegador.",
+      );
+    }
   }
 
   function handleClearDraft(): void {
     if (
-      !user ||
+      !buyerKey ||
       isSubmitting ||
       submissionLockRef.current
     ) {
@@ -320,22 +293,28 @@ export function CheckoutContent() {
       return;
     }
 
-    const form = formRef.current;
+    try {
+      clearCheckoutDraft(buyerKey);
+      clearCheckoutId(buyerKey);
+      setSubmitError("");
 
-    clearCheckoutDraft(user.id);
-    clearCheckoutId(user.id);
-    setSubmitError("");
+      const form = formRef.current;
 
-    if (!form) {
-      return;
-    }
+      if (!form) {
+        return;
+      }
 
-    form.reset();
+      form.reset();
 
-    const emailControl = form.elements.namedItem("email");
+      const emailControl = form.elements.namedItem("email");
 
-    if (emailControl instanceof HTMLInputElement) {
-      emailControl.value = user.email;
+      if (emailControl instanceof HTMLInputElement) {
+        emailControl.value = user?.email ?? "";
+      }
+    } catch {
+      setSubmitError(
+        "No fue posible limpiar los datos guardados.",
+      );
     }
   }
 
@@ -347,7 +326,7 @@ export function CheckoutContent() {
     if (
       cart.length === 0 ||
       submissionLockRef.current ||
-      !user
+      !buyerKey
     ) {
       return;
     }
@@ -356,21 +335,17 @@ export function CheckoutContent() {
     setSubmitError("");
     setIsSubmitting(true);
 
-    const form = event.currentTarget;
-    const draft = createDraftFromForm(form);
-
-    saveCheckoutDraft(user.id, draft);
+    const draft = createDraftFromForm(event.currentTarget);
 
     try {
-      const checkoutId = getOrCreateCheckoutId(user.id);
+      saveCheckoutDraft(buyerKey, draft);
+
+      const checkoutId = getOrCreateCheckoutId(buyerKey);
 
       const checkoutData: CheckoutData = {
         shippingAddress: {
           fullName: draft.fullName,
-          street: [
-            draft.address,
-            draft.neighborhood,
-          ]
+          street: [draft.address, draft.neighborhood]
             .filter(Boolean)
             .join(", "),
           city: draft.city,
@@ -379,31 +354,67 @@ export function CheckoutContent() {
           country: "México",
           phone: draft.phone,
         },
+        contactEmail: draft.email,
+        deliveryNotes: draft.deliveryNotes,
+        guestSessionId: guestSessionId ?? undefined,
         paymentMethod: "card",
         checkoutId,
       };
 
-      const checkoutCart = {
-        items: cart,
+      const checkoutCart: Cart = {
+        items: cart.map((item) => {
+          const product = catalogService.getProductBySlug(
+            item.productSlug,
+          );
+          const design = catalogService.getDesignBySlug(
+            item.designSlug,
+          );
+
+          if (!product || !design) {
+            throw new Error(
+              "Un producto o diseño ya no está disponible. Revisa tu carrito.",
+            );
+          }
+
+          return {
+            ...item,
+            product,
+            design,
+            selectedOptions: [
+              {
+                optionId: "format",
+                optionName: "Formato",
+                valueId: item.format,
+                valueLabel: item.formatLabel,
+                value: item.format,
+                priceModifier: item.unitPrice - product.basePrice,
+              },
+            ],
+            lineTotal: item.unitPrice * item.quantity,
+            addedAt: new Date().toISOString(),
+          };
+        }),
         subtotal,
         shipping,
         total,
-      } as unknown as Cart;
+      };
 
       const order = await orderService.createOrder(
-        user.id,
+        user?.id ?? null,
         checkoutCart,
         checkoutData,
       );
 
       clearCart();
-      clearCheckoutId(user.id);
-      clearCheckoutDraft(user.id);
+      clearCheckoutId(buyerKey);
+      clearCheckoutDraft(buyerKey);
+
+      const basePath = user
+        ? "/account/orders"
+        : "/order-confirmation";
 
       router.replace(
-        `/account/orders/${encodeURIComponent(
-          order.orderNumber,
-        )}`,
+        `${basePath}/${encodeURIComponent(order.orderNumber)}`,
       );
     } catch (caughtError) {
       submissionLockRef.current = false;
@@ -421,26 +432,17 @@ export function CheckoutContent() {
     return (
       <section className={styles.emptyState}>
         <span>Checkout OHO</span>
-
         <h1>No hay productos por confirmar.</h1>
-
         <p>
-          Tu carrito está vacío. Agrega una pieza
-          personalizada antes de continuar con el checkout.
+          Tu carrito está vacío. Agrega una pieza personalizada
+          antes de continuar con el checkout.
         </p>
 
         <div className={styles.emptyActions}>
-          <Link
-            href="/designs"
-            className={styles.primaryButton}
-          >
+          <Link href="/designs" className={styles.primaryButton}>
             Explorar diseños
           </Link>
-
-          <Link
-            href="/cart"
-            className={styles.secondaryButton}
-          >
+          <Link href="/cart" className={styles.secondaryButton}>
             Volver al carrito
           </Link>
         </div>
@@ -454,10 +456,11 @@ export function CheckoutContent() {
         <div className={styles.heading}>
           <span>Checkout OHO</span>
           <h1>Completa tu pedido</h1>
-
+          {!user ? (
+            <p>Compra como invitado. No necesitas crear una cuenta.</p>
+          ) : null}
           <p>
-            Ingresa los datos necesarios para preparar y
-            enviar tus piezas.
+            Ingresa los datos necesarios para preparar y enviar tus piezas.
           </p>
         </div>
 
@@ -471,7 +474,6 @@ export function CheckoutContent() {
         >
           <fieldset disabled={isSubmitting}>
             <legend>1. Información de contacto</legend>
-
             <div className={styles.fieldGrid}>
               <label>
                 Nombre completo
@@ -511,7 +513,6 @@ export function CheckoutContent() {
 
           <fieldset disabled={isSubmitting}>
             <legend>2. Dirección de envío</legend>
-
             <div className={styles.fieldGrid}>
               <label className={styles.fullField}>
                 Calle y número
@@ -553,20 +554,12 @@ export function CheckoutContent() {
                   defaultValue=""
                   required
                 >
-                  <option value="" disabled>
-                    Selecciona un estado
-                  </option>
+                  <option value="" disabled>Selecciona un estado</option>
                   <option value="Chiapas">Chiapas</option>
-                  <option value="Ciudad de México">
-                    Ciudad de México
-                  </option>
-                  <option value="Estado de México">
-                    Estado de México
-                  </option>
+                  <option value="Ciudad de México">Ciudad de México</option>
+                  <option value="Estado de México">Estado de México</option>
                   <option value="Jalisco">Jalisco</option>
-                  <option value="Nuevo León">
-                    Nuevo León
-                  </option>
+                  <option value="Nuevo León">Nuevo León</option>
                   <option value="Oaxaca">Oaxaca</option>
                   <option value="Puebla">Puebla</option>
                   <option value="Yucatán">Yucatán</option>
@@ -601,7 +594,6 @@ export function CheckoutContent() {
 
           <fieldset disabled={isSubmitting}>
             <legend>3. Método de pago</legend>
-
             <label className={styles.paymentOption}>
               <input
                 type="radio"
@@ -609,23 +601,16 @@ export function CheckoutContent() {
                 value="card"
                 defaultChecked
               />
-
               <span>
-                <strong>
-                  Tarjeta de crédito o débito
-                </strong>
-
+                <strong>Tarjeta de crédito o débito</strong>
                 <small>
-                  Simulación: no se solicitarán datos
-                  bancarios.
+                  Simulación: no se solicitarán datos bancarios.
                 </small>
               </span>
             </label>
           </fieldset>
 
-          {submitError ? (
-            <p role="alert">{submitError}</p>
-          ) : null}
+          {submitError ? <p role="alert">{submitError}</p> : null}
 
           <div className={styles.formActions}>
             <button
@@ -641,9 +626,7 @@ export function CheckoutContent() {
       </section>
 
       <aside className={styles.summary}>
-        <span className={styles.summaryEyebrow}>
-          Resumen del pedido
-        </span>
+        <span className={styles.summaryEyebrow}>Resumen del pedido</span>
 
         <div className={styles.itemList}>
           {cart.map((item) => (
@@ -655,23 +638,17 @@ export function CheckoutContent() {
                   alt={item.productName}
                   className={styles.productImage}
                 />
-
                 <div className={styles.designImage}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.designImageUrl}
-                    alt=""
-                  />
+                  <img src={item.designImageUrl} alt="" />
                 </div>
               </div>
 
               <div className={styles.itemInformation}>
                 <strong>{item.productName}</strong>
                 <span>{item.designTitle}</span>
-
                 <small>
-                  {item.formatLabel} · Cantidad{" "}
-                  {item.quantity}
+                  {item.formatLabel} · Cantidad {item.quantity}
                 </small>
               </div>
 
@@ -687,11 +664,8 @@ export function CheckoutContent() {
         <div className={styles.totals}>
           <div>
             <span>Subtotal</span>
-            <strong>
-              {CURRENCY_FORMATTER.format(subtotal)}
-            </strong>
+            <strong>{CURRENCY_FORMATTER.format(subtotal)}</strong>
           </div>
-
           <div>
             <span>Envío</span>
             <strong>
@@ -700,12 +674,9 @@ export function CheckoutContent() {
                 : CURRENCY_FORMATTER.format(shipping)}
             </strong>
           </div>
-
           <div className={styles.total}>
             <span>Total</span>
-            <strong>
-              {CURRENCY_FORMATTER.format(total)}
-            </strong>
+            <strong>{CURRENCY_FORMATTER.format(total)}</strong>
           </div>
         </div>
 
@@ -717,9 +688,7 @@ export function CheckoutContent() {
           <p className={styles.shippingMessage}>
             Agrega{" "}
             <strong>
-              {CURRENCY_FORMATTER.format(
-                1500 - subtotal,
-              )}
+              {CURRENCY_FORMATTER.format(1500 - subtotal)}
             </strong>{" "}
             para obtener envío gratis.
           </p>
@@ -731,10 +700,7 @@ export function CheckoutContent() {
           className={styles.submitButton}
           disabled={isSubmitting}
         >
-          {isSubmitting
-            ? "Confirmando..."
-            : "Confirmar pedido"}
-
+          {isSubmitting ? "Confirmando..." : "Confirmar pedido"}
           <span aria-hidden="true">→</span>
         </button>
 

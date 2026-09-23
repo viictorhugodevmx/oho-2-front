@@ -1,0 +1,48 @@
+.primaryButton,
+.secondaryButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 3.2rem;
+  box-sizing: border-box;
+  padding: 0.85rem 1.25rem;
+  border: 1px solid var(--foreground);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 850;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primaryButton {
+  margin-top: 0.35rem;
+  color: #ffffff;
+  background: var(--foreground);
+}
+
+.secondaryButton {
+  color: var(--foreground);
+  background: transparent;
+}
+
+.primaryButton:hover:not(:disabled),
+.secondaryButton:hover {
+  border-color: var(--accent);
+  color: #ffffff;
+  background: var(--accent);
+}
+
+.primaryButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.primaryButton:focus-visible,
+.secondaryButton:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}

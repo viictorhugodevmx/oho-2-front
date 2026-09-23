@@ -1,0 +1,254 @@
+.page {
+  min-height: 70vh;
+  padding: clamp(2rem, 5vw, 4.5rem) 1.25rem;
+  background:
+    radial-gradient(
+      circle at 95% 0,
+      rgba(217, 41, 28, 0.08),
+      transparent 28rem
+    ),
+    var(--background);
+}
+
+.container {
+  width: 100%;
+  max-width: 68rem;
+  margin-inline: auto;
+  min-width: 0;
+}
+
+.heading {
+  max-width: 46rem;
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.heading h1 {
+  margin: 0.75rem 0 1rem;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+
+.heading p {
+  margin: 0.5rem 0;
+  color: var(--muted);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.heading strong {
+  color: var(--foreground);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.card {
+  min-width: 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--border);
+  border-radius: 1.2rem;
+  background: var(--surface);
+}
+
+.card h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.2rem;
+  letter-spacing: -0.025em;
+}
+
+.items {
+  display: grid;
+  gap: 1rem;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.itemInfo {
+  min-width: 0;
+  display: grid;
+  gap: 0.35rem;
+  overflow-wrap: anywhere;
+}
+
+.itemInfo strong {
+  font-size: 0.95rem;
+}
+
+.itemInfo span,
+.itemInfo small {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.itemPrice {
+  flex-shrink: 0;
+  padding-top: 0.1rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.totals {
+  display: grid;
+  gap: 0.9rem;
+  margin: 1.5rem 0 0;
+}
+
+.totals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.totals dt {
+  color: var(--muted);
+}
+
+.totals dd {
+  margin: 0;
+  font-weight: 800;
+}
+
+.totals .total {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 1.2rem;
+}
+
+.total dt {
+  color: var(--foreground);
+  font-weight: 850;
+}
+
+.address {
+  display: grid;
+  gap: 0.4rem;
+  font-style: normal;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.address span {
+  color: var(--muted);
+}
+
+.notes {
+  margin: 1.25rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.notice {
+  margin: 1.5rem 0 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 3rem;
+  padding: 0.85rem 1.5rem;
+  border: 1px solid var(--foreground);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+}
+
+.primaryButton {
+  color: var(--background);
+  background: var(--foreground);
+}
+
+.secondaryButton {
+  color: var(--foreground);
+  background: var(--surface);
+}
+
+.primaryButton:hover,
+.secondaryButton:hover {
+  border-color: var(--accent);
+  color: #ffffff;
+  background: var(--accent);
+}
+
+.primaryButton:focus-visible,
+.secondaryButton:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.help {
+  max-width: 45rem;
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 760px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding-inline: 1rem;
+  }
+
+  .item {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
