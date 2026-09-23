@@ -1,48 +1,39 @@
-# OHO 2.0 — Compra como invitado
+# OHO 2.0 — Estado de compra como invitado
 
-## Estado
+## Cierres confirmados por Víctor
 
-- Último paso principal cerrado por Víctor: 25.4.2.
-- Paso principal abierto: 25.4.3 — contrato frontend/backend.
-- Ajuste en curso: 25.4.3.1 — compra como invitado.
-- Validación local del conjunto: pendiente.
-- Cierre explícito de Víctor: pendiente.
+- App OHO 2.0 - paso 25.4.1 listo.
+- App OHO 2.0 - paso 25.4.2 listo.
+- App OHO 2.0 - paso 25.4.3.1 listo.
 
-## Comportamiento
+## Trabajo actual
 
-- Login ofrece continuar como invitado al regresar a /checkout.
-- /checkout?guest=1 permite comprar sin crear una cuenta.
-- /account mantiene su protección.
-- Los pedidos invitados tienen userId null.
-- Correo de contacto y referencias quedan en el pedido.
-- El borrador se separa por cuenta o identidad invitada.
-- La confirmación invitada está fuera de /account.
-- Se conservan los pedidos anteriores.
-- Registrarse después no vincula automáticamente compras invitadas.
+- 25.4.3 permanece abierto.
+- 25.4.3.2: actualización del contrato con compra invitada.
+- Documento: docs/contrato-checkout-v0.1.md.
+- Cierre de 25.4.3.2: pendiente de Víctor.
 
-## Límites de esta etapa
+## Resultado del ajuste frontend
 
-- Persistencia en el navegador.
-- Pago e impresión simulados.
-- No se envían correos.
-- La identidad invitada de sessionStorage no es seguridad de backend.
-- La prevención de duplicados cubre la misma ejecución del navegador;
-  la garantía entre pestañas y procesos corresponde al backend.
-- Se conserva la regla visible de envío: 149 MXN, gratis desde 1500 MXN.
+Compra invitada implementada y aceptada por Víctor.
+Confirmación con estilos propios y acciones de login ajustadas.
+El invitado consulta cada confirmación individual; no tiene perfil
+ni historial acumulado.
 
-## Validación pendiente
+El cierre fue comunicado por Víctor; no constituye una ejecución
+de pruebas en su equipo por parte del asistente.
 
-- Lint y build.
-- Compra invitada.
-- Restauración del borrador al recargar.
-- Doble clic sin duplicar el pedido.
-- Recarga de confirmación.
-- Confirmación no disponible en otra sesión independiente.
-- Compra con cuenta e historial.
-- Protección de /account.
-- Revisión móvil del acceso y la confirmación.
+## Alcance actual
+
+Frontend mock con persistencia en el navegador.
+Sin pagos, correos o impresión reales.
+Sin asociación automática de pedidos invitados al registrarse.
 
 ## Continuación
 
-Actualizar el contrato con compra invitada en 25.4.3.2.
-El paso 25.4.3 permanece abierto hasta el cierre de Víctor.
+Revisar y cerrar 25.4.3.2.
+Después confirmar el cierre principal de 25.4.3 y continuar con
+25.4.4: cierre de la etapa frontend mock.
+
+El blueprint del backend local se prepara después de esa etapa.
+Costos y despliegue de producción permanecen pendientes.
