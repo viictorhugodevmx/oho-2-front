@@ -236,6 +236,8 @@
 }
 
 .checkoutButton {
+  position: relative;
+  justify-content: center;
   width: 100%;
   border: 0;
   color: #ffffff;
@@ -244,6 +246,11 @@
   font: inherit;
   font-size: 0.75rem;
   font-weight: 850;
+}
+
+.checkoutButton > span {
+  position: absolute;
+  right: 1.1rem;
 }
 
 .checkoutButton:hover,
@@ -339,3 +346,4 @@
     flex-direction: row;
   }
 }
+
